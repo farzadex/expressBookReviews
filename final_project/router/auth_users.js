@@ -22,9 +22,6 @@ regd_users.post("/login", (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    console.log(username);
-    console.log(password)
-
     if (!username || !password) {
         return res.status(404).json({ message: "Error logging in. Provide username/password" });
     }
@@ -44,8 +41,18 @@ regd_users.post("/login", (req, res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-    //Write your code here
-    return res.status(300).json({ message: "Yet to be implemented" });
+    const isbn = req.params.isbn;
+    const review = req.query?.review;
+    const user = req.user;
+
+    if (!review) {
+        return res.status(400).json({ message: "Empty review" });
+    }
+    if(books[isbn]) {
+        books[isbn].reviews[user] = review;
+        return res.status(200).send("Review added successfuly");
+    }
+    res.status(404).json({ message: "ISBN not found" })
 });
 
 module.exports.authenticated = regd_users;
